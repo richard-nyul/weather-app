@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const getCurrentWeather = createAsyncThunk("currentWeather/get", async () => {
   try {
@@ -8,9 +9,11 @@ export const getCurrentWeather = createAsyncThunk("currentWeather/get", async ()
       "https://api.weatherapi.com/v1/current.json?key=0718c220c5794c42b25124208241605&q=Budapest&aqi=no",
     );
     const result = await data.json();
+    const jsonValue = JSON.stringify(result);
+    await AsyncStorage.setItem("current-weather-data", jsonValue);
     return result;
   } catch (error) {
-    console.error(error);
+    throw new Error();
   }
 });
 
@@ -20,8 +23,10 @@ export const getFourDaysForecastWeather = createAsyncThunk("currentWeather/get",
       "https://api.weatherapi.com/v1/forecast.json?key=0718c220c5794c42b25124208241605&q=Budapest&days=4",
     );
     const result = await data.json();
+    const jsonValue = JSON.stringify(result);
+    await AsyncStorage.setItem("forecast-weather-data", jsonValue);
     return result;
   } catch (error) {
-    console.error(error);
+    throw new Error();
   }
 });

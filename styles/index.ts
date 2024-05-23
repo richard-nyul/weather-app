@@ -127,3 +127,15 @@ export const forecastStyles = StyleSheet.create({
     marginHorizontal: 5,
   },
 });
+
+export const loadingScreenStyles = {
+  container: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
+  },
+};

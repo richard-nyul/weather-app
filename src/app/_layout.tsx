@@ -6,6 +6,7 @@ import store from "@/store/store";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View } from "react-native";
 import ForecastModal from "./modal";
+import { colors, fontSize } from "@/theme/theme";
 
 const App = () => {
   return (
@@ -33,6 +34,13 @@ const RootNavigation = () => {
             gestureEnabled: true,
             gestureDirection: "vertical",
             title: "Forecast",
+            headerTransparent: true,
+            headerTitleStyle: {
+              color: colors.text,
+              fontSize: fontSize.lg,
+            },
+            headerTitleAlign: "center",
+            headerTintColor: colors.text,
           }}
         />
       </Stack>

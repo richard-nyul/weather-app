@@ -7,10 +7,21 @@ import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "@/theme/theme";
 import { forecastStyles as styles } from "@/styles";
 import getDayOfWeek from "@/hooks/getTheDay";
+import LoadingScreen from "./screens/LoadingScreen";
+import ErrorScreen from "./screens/ErrorScreen";
+import { getDataFromStorage } from "@/hooks/getDataFromStorage";
+import { useState } from "react";
 
 const ForecastModal = () => {
   const dispatch: AppDispatch = useDispatch();
   const forecast = useSelector((state: RootState) => state.fourDaysForecastWeather);
+
+  const [localWeatherData, setLocalWeatherData] = useState(null);
+
+  const fetchData = async () => {
+    const data = await getDataFromStorage("forecast-weather-data");
+    setLocalWeatherData(data);
+  };
 
   interface DayProps {
     date: string;
@@ -27,12 +38,24 @@ const ForecastModal = () => {
     dispatch(getFourDaysForecastWeather());
   }, []);
 
+  useEffect(() => {
+    if (forecast.status.hasError) {
+      fetchData();
+    }
+  }, [forecast.status.hasError]);
+
   if (forecast.status.isLoading) {
-    return <Text style={styles.loadingText}>Loading...</Text>;
+    return <LoadingScreen />;
   }
 
-  if (forecast.status.hasError) {
-    return <Text style={styles.errorText}>Error loading weather data</Text>;
+  if (forecast.status.hasError && !localWeatherData) {
+    return <ErrorScreen />;
+  }
+
+  const weatherData = localWeatherData || forecast.data;
+
+  if (!weatherData) {
+    return null;
   }
 
   return (

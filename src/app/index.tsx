@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
@@ -8,32 +8,50 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "react-native-elements";
 import { colors } from "@/theme/theme";
 import { currentWeatherStyles as styles } from "@/styles";
-import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { RootStackNavigationProp } from "@/src/app/types/navigationTypes";
+import LoadingScreen from "./screens/LoadingScreen";
+import ErrorScreen from "./screens/ErrorScreen";
+import { getDataFromStorage } from "@/hooks/getDataFromStorage";
 
 const CurrentScreen = () => {
   const dispatch: AppDispatch = useDispatch();
   const currentWeather = useSelector((state: RootState) => state.currentWeather);
-  // const navigation = useNavigation<RootStackNavigationProp>();
   const navigation = useRouter();
+
+  const [localWeatherData, setLocalWeatherData] = useState(null);
+
+  const fetchData = async () => {
+    const data = await getDataFromStorage("current-weather-data");
+    setLocalWeatherData(data);
+  };
 
   useEffect(() => {
     dispatch(getCurrentWeather());
   }, []);
 
+  useEffect(() => {
+    if (currentWeather.status.hasError) {
+      fetchData();
+    }
+  }, [currentWeather.status.hasError]);
+
   if (currentWeather.status.isLoading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
 
-  if (currentWeather.status.hasError) {
-    return <Text>Error loading weather data</Text>;
+  if (currentWeather.status.hasError && !localWeatherData) {
+    return <ErrorScreen />;
   }
 
-  const { name } = currentWeather.data.location;
-  const { temp_c, feelslike_c, wind_kph, precip_mm, uv, humidity, cloud } =
-    currentWeather.data.current;
-  const { text, icon } = currentWeather.data.current.condition;
+  const weatherData = localWeatherData || currentWeather.data;
+
+  if (!weatherData) {
+    return null;
+  }
+
+  const { name } = weatherData.location;
+  const { temp_c, feelslike_c, wind_kph, precip_mm, uv, humidity, cloud } = weatherData.current;
+  const { text, icon } = weatherData.current.condition;
 
   const attris = [
     { name: feelslike_c, logo: "🌡️", unit: "°C" },
