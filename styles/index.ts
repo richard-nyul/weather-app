@@ -126,6 +126,13 @@ export const forecastStyles = StyleSheet.create({
     color: colors.text,
     marginHorizontal: 5,
   },
+  button: {
+    backgroundColor: colors.mainGradientStart,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginTop: 70,
+  },
 });
 
 export const loadingScreenStyles = StyleSheet.create({

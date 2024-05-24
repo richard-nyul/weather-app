@@ -11,10 +11,14 @@ import LoadingScreen from "./screens/LoadingScreen";
 import ErrorScreen from "./screens/ErrorScreen";
 import { getDataFromStorage } from "@/hooks/getDataFromStorage";
 import { useState } from "react";
+import { router, useRouter } from "expo-router";
+import { Button } from "react-native-elements";
 
 const ForecastModal = () => {
   const dispatch: AppDispatch = useDispatch();
   const forecast = useSelector((state: RootState) => state.fourDaysForecastWeather);
+  const navigation = useRouter();
+  const isPresented = router.canGoBack();
 
   const [localWeatherData, setLocalWeatherData] = useState(null);
   interface DayProps {
@@ -82,6 +86,9 @@ const ForecastModal = () => {
               </View>
             );
           })}
+        {!isPresented && (
+          <Button buttonStyle={styles.button} title="<" onPress={() => navigation.push("/")} />
+        )}
       </ScrollView>
     </LinearGradient>
   );
