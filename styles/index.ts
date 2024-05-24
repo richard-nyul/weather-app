@@ -128,7 +128,7 @@ export const forecastStyles = StyleSheet.create({
   },
 });
 
-export const loadingScreenStyles = {
+export const loadingScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
@@ -138,4 +138,4 @@ export const loadingScreenStyles = {
     justifyContent: "space-around",
     padding: 10,
   },
-};
+});

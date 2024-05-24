@@ -17,12 +17,6 @@ const ForecastModal = () => {
   const forecast = useSelector((state: RootState) => state.fourDaysForecastWeather);
 
   const [localWeatherData, setLocalWeatherData] = useState(null);
-
-  const fetchData = async () => {
-    const data = await getDataFromStorage("forecast-weather-data");
-    setLocalWeatherData(data);
-  };
-
   interface DayProps {
     date: string;
     day: {
@@ -33,6 +27,11 @@ const ForecastModal = () => {
       };
     };
   }
+
+  const fetchData = async () => {
+    const data = await getDataFromStorage("forecast-weather-data");
+    setLocalWeatherData(data);
+  };
 
   useEffect(() => {
     dispatch(getFourDaysForecastWeather());
@@ -63,10 +62,8 @@ const ForecastModal = () => {
       colors={[colors.mainGradientStart, colors.mainGradientEnd]}
       style={styles.gradient}>
       <ScrollView contentContainerStyle={styles.scrollView}>
-        {forecast.data &&
-        forecast.data.forecast &&
-        Array.isArray(forecast.data.forecast.forecastday) ? (
-          forecast.data.forecast.forecastday.map((day: DayProps) => {
+        {weatherData.forecast &&
+          weatherData.forecast.forecastday.map((day: DayProps) => {
             const { mintemp_c, maxtemp_c } = day.day;
             const { icon } = day.day.condition;
 
@@ -84,10 +81,7 @@ const ForecastModal = () => {
                 </View>
               </View>
             );
-          })
-        ) : (
-          <Text style={styles.noDataText}>No forecast data available</Text>
-        )}
+          })}
       </ScrollView>
     </LinearGradient>
   );

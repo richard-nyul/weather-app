@@ -1,28 +1,19 @@
 import React from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "@/theme/theme";
+import { loadingScreenStyles as styles } from "@/styles";
 
-const LoadingScreen = () => (
-  <LinearGradient
-    colors={[colors.mainGradientStart, colors.mainGradientEnd]}
-    style={styles.container}>
-    <View style={[styles.container, styles.horizontal]}>
-      <ActivityIndicator size="large" />
-    </View>
-  </LinearGradient>
-);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  horizontal: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    padding: 10,
-  },
-});
+const LoadingScreen = () => {
+  return (
+    <LinearGradient
+      colors={[colors.mainGradientStart, colors.mainGradientEnd]}
+      style={styles.container}>
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator size="large" />
+      </View>
+    </LinearGradient>
+  );
+};
 
 export default LoadingScreen;
