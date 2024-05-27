@@ -9,7 +9,7 @@ export const getCurrentWeather = createAsyncThunk("currentWeather/get", async ()
       "https://api.weatherapi.com/v1/current.json?key=0718c220c5794c42b25124208241605&q=Budapest&aqi=no",
     );
     const result = await data.json();
-    if (result.loaction) {
+    if (result.location) {
       const jsonValue = JSON.stringify(result);
       await AsyncStorage.setItem("current-weather-data", jsonValue);
       return result;
@@ -26,7 +26,7 @@ export const getFourDaysForecastWeather = createAsyncThunk("forecastWeather/get"
       "https://api.weatherapi.com/v1/forecast.json?key=0718c220c5794c42b25124208241605&q=Budapest&days=4",
     );
     const result = await data.json();
-    if (result.loaction) {
+    if (result.location) {
       const jsonValue = JSON.stringify(result);
       await AsyncStorage.setItem("forecast-weather-data", jsonValue);
       return result;

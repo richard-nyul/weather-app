@@ -50,12 +50,11 @@ const ForecastModal = () => {
   if (forecast.status.isLoading) {
     return <LoadingScreen />;
   }
+  const weatherData = localWeatherData || forecast.data;
 
   if (forecast.status.hasError && !localWeatherData) {
     return <ErrorScreen />;
   }
-
-  const weatherData = localWeatherData || forecast.data;
 
   if (!weatherData) {
     return null;

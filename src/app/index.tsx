@@ -38,12 +38,11 @@ const CurrentScreen = () => {
   if (currentWeather.status.isLoading) {
     return <LoadingScreen />;
   }
+  const weatherData = localWeatherData || currentWeather.data;
 
   if (currentWeather.status.hasError && !localWeatherData) {
     return <ErrorScreen />;
   }
-
-  const weatherData = localWeatherData || currentWeather.data;
 
   if (!weatherData) {
     return null;
