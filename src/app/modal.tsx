@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { ScrollView, View, Text, Image } from "react-native";
+import React, { useEffect, useCallback } from "react";
+import { ScrollView, View, Text, Image, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { getFourDaysForecastWeather } from "@/store/thunks/weathertunks";
@@ -21,6 +21,7 @@ const ForecastModal = () => {
   const isPresented = router.canGoBack();
 
   const [localWeatherData, setLocalWeatherData] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   interface DayProps {
     date: string;
     day: {
@@ -39,6 +40,12 @@ const ForecastModal = () => {
 
   useEffect(() => {
     dispatch(getFourDaysForecastWeather());
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await dispatch(getFourDaysForecastWeather());
+    setRefreshing(false);
   }, []);
 
   useEffect(() => {
@@ -64,7 +71,9 @@ const ForecastModal = () => {
     <LinearGradient
       colors={[colors.mainGradientStart, colors.mainGradientEnd]}
       style={styles.gradient}>
-      <ScrollView contentContainerStyle={styles.scrollView}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         {weatherData.forecast &&
           weatherData.forecast.forecastday.map((day: DayProps) => {
             const { mintemp_c, maxtemp_c } = day.day;

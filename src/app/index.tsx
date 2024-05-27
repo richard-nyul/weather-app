@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, Image, ScrollView, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { getCurrentWeather } from "@/store/thunks/weathertunks";
@@ -19,11 +19,18 @@ const CurrentScreen = () => {
   const navigation = useRouter();
 
   const [localWeatherData, setLocalWeatherData] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
     const data = await getDataFromStorage("current-weather-data");
     setLocalWeatherData(data);
   };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await dispatch(getCurrentWeather());
+    setRefreshing(false);
+  }, []);
 
   useEffect(() => {
     dispatch(getCurrentWeather());
@@ -35,9 +42,10 @@ const CurrentScreen = () => {
     }
   }, [currentWeather.status.hasError]);
 
-  if (currentWeather.status.isLoading) {
+  if (currentWeather.status.isLoading && !refreshing) {
     return <LoadingScreen />;
   }
+
   const weatherData = localWeatherData || currentWeather.data;
 
   if (currentWeather.status.hasError && !localWeatherData) {
@@ -66,29 +74,33 @@ const CurrentScreen = () => {
       colors={[colors.mainGradientStart, colors.mainGradientEnd]}
       style={styles.gradient}>
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <Text style={styles.text}>{name}</Text>
-          <Image source={{ uri: `https:${icon}` }} style={styles.image} />
-          <Text style={styles.text}>{temp_c} °C</Text>
-          <Text style={styles.text}>{text}</Text>
-        </View>
-        <View style={styles.attrisContainer}>
-          {attris.map((attri, index) => (
-            <View key={index} style={styles.attris}>
-              <Text style={styles.text}>{attri.logo}</Text>
-              <Text style={styles.attritext}>
-                {attri.name} {attri.unit}
-              </Text>
-            </View>
-          ))}
-        </View>
-        <View style={styles.buttonContainer}>
-          <Button
-            title="4 Day Forecast"
-            buttonStyle={styles.button}
-            onPress={() => navigation.push("/modal")}
-          />
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.safeArea}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+          <View style={styles.container}>
+            <Text style={styles.text}>{name}</Text>
+            <Image source={{ uri: `https:${icon}` }} style={styles.image} />
+            <Text style={styles.text}>{temp_c} °C</Text>
+            <Text style={styles.text}>{text}</Text>
+          </View>
+          <View style={styles.attrisContainer}>
+            {attris.map((attri, index) => (
+              <View key={index} style={styles.attris}>
+                <Text style={styles.text}>{attri.logo}</Text>
+                <Text style={styles.attritext}>
+                  {attri.name} {attri.unit}
+                </Text>
+              </View>
+            ))}
+          </View>
+          <View style={styles.buttonContainer}>
+            <Button
+              title="4 Day Forecast"
+              buttonStyle={styles.button}
+              onPress={() => navigation.push("/modal")}
+            />
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </LinearGradient>
   );
